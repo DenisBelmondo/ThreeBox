@@ -1,0 +1,1 @@
+import './quickjs-ffi.js'

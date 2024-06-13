@@ -1,0 +1,8 @@
+{
+    "compilerOptions": {
+        "paths": {
+            "quickjs-ffi.js": ["./dist/*"]
+        },
+        "lib": ["ESNext"],
+    }
+}
