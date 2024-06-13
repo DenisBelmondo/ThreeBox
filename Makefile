@@ -22,13 +22,23 @@ else
 	endif
 endif
 
-all:
+all: out_dir native js
+
+out_dir:
+	mkdir -p $(OUT_DIR)
+
+quickjs:
 	cd third_party/quickjs && $(MAKE) $(QUICKJS_FLAGS) qjs
 	cd third_party/quickjs && $(MAKE) $(QUICKJS_FLAGS) libquickjs.lto.a
-	@mkdir -p $(OUT_DIR)
+
+quickjs-ffi:
 	$(CC) $(CFLAGS) -shared -Wl,--out-implib,$(OUT_DIR)/libquickjs-ffi.a -Ithird_party -lpthread -ldl -lffi -Lthird_party/quickjs -lquickjs.lto -o $(OUT_DIR)/libquickjs-ffi$(SO) third_party/quickjs-ffi/quickjs-ffi.c
-	@cp third_party/quickjs-ffi/quickjs-ffi.js $(OUT_DIR)
-	@cp static/* $(OUT_DIR)
+
+native: quickjs quickjs-ffi
+
+js:
+	cp third_party/quickjs-ffi/quickjs-ffi.js $(OUT_DIR)
+	cp static/* $(OUT_DIR)
 
 clean:
 	cd third_party/quickjs && $(MAKE) clean
