@@ -1,0 +1,12 @@
+.*/
+.*
+*.a
+*.o
+*.dll
+*.dylib
+*.exe
+*.so
+compile_commands.json
+dist/
+!.gitignore
+!.gitmodules
