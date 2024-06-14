@@ -8,7 +8,6 @@ CFLAGS :=\
 	-Wextra\
 	-Wpedantic
 OUT_DIR := dist
-QUICKJS_FLAGS := CONFIG_CLANG=true #CONFIG_LTO=true
 
 SO := .so
 
@@ -25,12 +24,14 @@ endif
 all: out_dir native js
 
 out_dir:
-	mkdir -p $(OUT_DIR)
+	mkdir -p $(OUT_DIR)/bin
 
-quickjs:
-	cd third_party/quickjs && $(MAKE) $(QUICKJS_FLAGS) qjs
-	cd third_party/quickjs && $(MAKE) $(QUICKJS_FLAGS) libquickjs.a
-	@cp third_party/quickjs/qjs.exe dist || cp third_party/quickjs/qjs dist
+quickjs: out_dir
+	pushd third_party/quickjs\
+		&& $(MAKE) three_box\
+		&& popd\
+		&& cp third_party/quickjs/qjs.exe $(OUT_DIR)/bin\
+		;cp third_party/quickjs/libquickjs.dll $(OUT_DIR)/bin
 
 quickjs-ffi:
 	$(CC) $(CFLAGS) -shared -fPIC -Wl,--out-implib,libquickjs-ffi.a -Ithird_party -lpthread -ldl -lffi -Lthird_party/quickjs -lquickjs -o $(OUT_DIR)/libquickjs-ffi$(SO) third_party/quickjs-ffi/quickjs-ffi.c
@@ -42,4 +43,4 @@ js:
 
 clean:
 	cd third_party/quickjs && $(MAKE) clean
-	rm $(OUT_DIR)/*
+	rm -rf $(OUT_DIR)/*
